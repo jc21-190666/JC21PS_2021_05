@@ -41,15 +41,17 @@ public class ParticipantListControllerServlet extends HttpServlet {
 
 		// リクエストパラメーターから活動IDを取得する
 		// TODO: リクエストから遷移元でクリックされた活動IDを取得できるように44行目を変更しなさい。
-		String activityId = "";
+		String activityId = (String) request.getSession().getAttribute("activityId");
 
 		// TODO: データベースから必要な情報を取得するためのSQL文を完成させなさい。
-		String sql = "SELECT ";
+		String sql = "SELECT X.activity_id, Y.activity_id, X.activity_name, Y.user_id \n" +
+				"FROM trn_activity X,trn_participant Y \n" +
+				"WHERE X.activity_id = Y.activity_id AND X.activity_id = ?";
 
 		// SQLに埋め込むパラメータリストを定義
 		List<String> paramList = new ArrayList<String>();
 		// TODO: SQLに埋め込む値を設定しなさい。
-		
+		paramList.add(activityId);
 
 		// DB接続を初期化
 		DBConnection db = new DBConnection();
@@ -72,6 +74,8 @@ public class ParticipantListControllerServlet extends HttpServlet {
 				DBから取得した情報はResultSetクラスのgetString()メソッドで取得する。
 				getStringメソッドの引数は取得したいカラム名を文字列で指定する。
 				 */
+				bean.setActivityName(rs.getString("X.activity_name"));
+				bean.addParticipantList(rs.getString("Y.user_id"));
 
 
 			}
